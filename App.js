@@ -5,10 +5,22 @@ import {useState} from 'react'
 import GameScreen from './screens/GamesScreen';
 import Colors from './constants/colors'
 import GameOverScreen from './screens/GameOverScreen';
+import {useFonts} from 'expo-font'
+import AppLoading from 'expo-app-loading'
 export default function App() {
 
   const [userNumber, setUserNumber] = useState();
   const [gameIsOver, setGameIsOver] = useState(true);
+  const [guessRounds, setGuessRound] = useState(0)
+ const [fontsLoaded] = useFonts({
+    'open-sans': require('./assets/fonts/OpenSans-Regular.ttf'),
+    'open-sans-bold': require('./assets/fonts/OpenSans-Bold.ttf'),
+  })
+
+
+  if(!fontsLoaded){
+    return <AppLoading/>
+  }
 
   function pickedNumberHandler(pickedNumber){
       setUserNumber(pickedNumber)
@@ -16,7 +28,10 @@ export default function App() {
   }
 
 
-  
+  function startNewGameHandler(){
+    setUserNumber(0)
+    setGuessRound(0)
+  }
   
   function gameOverHandler (){
     setGameIsOver(true)
@@ -27,7 +42,7 @@ export default function App() {
     screen = <GameScreen userNumber={userNumber} onGameOver={gameOverHandler} />
   }
   if(gameIsOver && userNumber){
-    screen = <GameOverScreen/>
+    screen = <GameOverScreen userNumber={userNumber} roundsNumber={guessRounds} onStartNewGame={startNewGameHandler} />
   }
   return (
   <LinearGradient colors={[Colors.primary800,Colors.accent500]}  style={styles.rootScreen}><ImageBackground style={styles.rootScreen} imageStyle={styles.backgroundImage} source={require('./assets/images/background.png')} resizeMode='cover'  ><SafeAreaView  style={styles.rootScreen}>{screen}</SafeAreaView></ImageBackground></LinearGradient>
