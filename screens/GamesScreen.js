@@ -6,6 +6,7 @@ import NumberContainer from '../components/game/NumberContainer';
 import PrimaryButton from '../components/ui/PrimaryButton';
 import Card from '../components/ui/card';
 import InstructionText from '../components/ui/InstructionText';
+import GuessLogItem from '../components/game/GuessLogITem';
 function generateRandomBetween(min, max, exclude) {
     const rndNum = Math.floor(Math.random() * (max - min)) + min;
   
@@ -25,7 +26,7 @@ function GameScreen({userNumber, onGameOver}){
     useEffect(()=>{
       console.log(currentGuess, userNumber)
       if(currentGuess === userNumber){
-        onGameOver()
+        onGameOver(guessRounds.length)
       }
     }, [currentGuess, userNumber, onGameOver])
 
@@ -51,13 +52,13 @@ function GameScreen({userNumber, onGameOver}){
       setGuessRounds((prev)=> [newRndNumber,...prev])
     }
 
-    
+    const guessRoundsLength = guessRounds.length
     return <View style={styles.screen} ><Title>Opponent's guess</Title><NumberContainer>{currentGuess}</NumberContainer><Card><InstructionText style={styles.instructionText} >
-        Higher or lower</InstructionText ><View style={styles.buttonsContainer}><View style={styles.buttonContainer} ><PrimaryButton onPress={nextGuessHandler.bind(this, 'lower')} ><Ionicons name='md-remove' size={24} color="white" /></PrimaryButton></View><View style={styles.buttonContainer}  ><PrimaryButton onPress={nextGuessHandler.bind(this, 'greater')}><Ionicons name='md-add' size={24} color="white" /></PrimaryButton></View></View></Card><View>
+        Higher or lower</InstructionText ><View style={styles.buttonsContainer}><View style={styles.buttonContainer} ><PrimaryButton onPress={nextGuessHandler.bind(this, 'lower')} ><Ionicons name='md-remove' size={24} color="white" /></PrimaryButton></View><View style={styles.buttonContainer}  ><PrimaryButton onPress={nextGuessHandler.bind(this, 'greater')}><Ionicons name='md-add' size={24} color="white" /></PrimaryButton></View></View></Card><View  style={styles.listContainer}>
           {/* {guessRounds.map(guess=>{
             return <Text key={guess} >{guess}</Text>
           })} */}
-          <FlatList data={guessRounds}  renderItem={({item, index, sep})=> <Text>{item}</Text>} />
+          <FlatList data={guessRounds} keyExtractor={(item)=> item}  renderItem={({item, index, sep})=> <GuessLogItem roundNumber={guessRoundsLength -index} guess={item}  />} />
           </View></View>
 }
 
@@ -80,6 +81,10 @@ const styles = StyleSheet.create({
     },
     instructionText: {
       marginBottom: 12
+    },
+    listContainer: {
+      flex:1 ,
+      padding: 16
     }
 
    
